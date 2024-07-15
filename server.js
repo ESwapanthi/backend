@@ -11,10 +11,9 @@ const users = [];
 app.use(express.json());
 
 // CORS configuration
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001','http://192.168.0.128:3000'];
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001', 'http://192.168.0.128:3000'];
 app.use(cors({
   origin: function(origin, callback) {
-    // Check if the origin is allowed or not defined (like mobile apps or curl requests)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -24,6 +23,11 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+// Default route for root URL
+app.get('/', (req, res) => {
+  res.send('API is working');
+});
 
 // Routes for fetching questions
 app.get('/api/questions/:subject/:level/:type', (req, res) => {
@@ -104,7 +108,6 @@ app.get('/api/questions/:subject/:level/:type', (req, res) => {
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   
-  // Simple validation logic
   const user = users.find(u => u.username === username && u.password === password);
   if (user) {
     res.status(200).json({ message: 'Login successful' });
@@ -117,7 +120,6 @@ app.post('/api/login', (req, res) => {
 app.post('/api/signup', (req, res) => {
   const { name, username, phone, email, password } = req.body;
   
-  // Simple validation and storage logic
   if (name && username && phone && email && password) {
     users.push({ name, username, phone, email, password });
     res.status(201).json({ message: 'Signup successful' });
